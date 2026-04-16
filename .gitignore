@@ -9,3 +9,8 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# tsc -b artifacts
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
