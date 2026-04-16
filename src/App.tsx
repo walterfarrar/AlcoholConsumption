@@ -13,7 +13,7 @@ export default function App() {
   const [activeType, setActiveType] = useState<DrinkTypeId | null>(null);
 
   // Mouse: small distance prevents click-to-remove being interpreted as drag.
-  // Touch: short delay so scrolling the page still works on mobile.
+  // Touch: short delay so vertical page scrolling still works on mobile.
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 6 } }),
@@ -42,22 +42,28 @@ export default function App() {
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveType(null)}
     >
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-amber-100 pb-10">
-        <header className="mx-auto max-w-6xl px-4 pt-6 sm:pt-10">
+      <div
+        className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-amber-100"
+        // pb leaves room for the fixed bottom palette (~110px) plus safe-area
+        style={{ paddingBottom: 'calc(140px + env(safe-area-inset-bottom, 0px))' }}
+      >
+        <header className="mx-auto max-w-3xl px-4 pt-6 sm:pt-10">
           <h1 className="text-2xl font-bold text-stone-800 sm:text-3xl">
-            How much do you drink in a typical week?
+            How much did you drink last week?
           </h1>
           <p className="mt-1 text-sm text-stone-600 sm:text-base">
-            Drag a bottle from the palette onto each day. Tap a bottle on a shelf to remove it.
+            Tap a category at the bottom to see drinks, then drag one up onto a day. Tap a bottle
+            on a shelf to remove it.
           </p>
         </header>
 
-        <main className="mx-auto mt-6 max-w-6xl space-y-4 px-4">
-          <BottlePalette />
+        <main className="mx-auto mt-5 max-w-3xl space-y-4 px-3 sm:px-4">
           <WeekGrid week={week} dispatch={dispatch} />
           <WeeklySummary week={week} dispatch={dispatch} />
         </main>
       </div>
+
+      <BottlePalette />
 
       <DragOverlay dropAnimation={null}>
         {activeType ? (

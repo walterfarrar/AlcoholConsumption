@@ -2,7 +2,9 @@ import { useEffect, useReducer } from 'react';
 import type { DayId, DrinkTypeId, WeekState } from './types';
 import { EMPTY_WEEK } from './data/drinks';
 
-const STORAGE_KEY = 'weekly-drinks-v1';
+// v4: re-collapsed spirit shots to generic shot, bucketed cocktails by strength,
+//      added tallboy/cider/champagneBottle/lightCocktail
+const STORAGE_KEY = 'weekly-drinks-v4';
 
 export type WeekAction =
   | { kind: 'add'; day: DayId; drink: DrinkTypeId }

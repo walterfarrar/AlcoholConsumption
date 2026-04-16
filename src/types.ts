@@ -1,12 +1,31 @@
+export type DrinkCategory = 'beer' | 'wine' | 'liquor' | 'cocktail';
+
 export type DrinkTypeId =
-  | 'beer'
+  // Beer & cider
   | 'lightBeer'
-  | 'wineGlass'
-  | 'wineBottle'
-  | 'shot'
-  | 'mixed'
+  | 'lightBeerCan'
+  | 'beer'
+  | 'beerCan'
+  | 'tallboy'
+  | 'ipa'
   | 'seltzer'
-  | 'champagne';
+  | 'cider'
+  // Wine
+  | 'wineRed'
+  | 'wineWhite'
+  | 'champagne'
+  | 'wineBottleRed'
+  | 'wineBottleWhite'
+  | 'champagneBottle'
+  // Liquor (straight)
+  | 'shot'
+  | 'whiskeyNeat'
+  | 'cordial'
+  // Cocktails (bucketed by alcohol content)
+  | 'lightCocktail'
+  | 'mixed'
+  | 'martini'
+  | 'tropical';
 
 export type DayId = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 
@@ -21,6 +40,12 @@ export interface DrinkDef {
   id: DrinkTypeId;
   label: string;
   shortLabel: string;
+  category: DrinkCategory;
   /** Approx. NIAAA standard drinks per unit. */
   standardDrinks: number;
+}
+
+export interface CategoryDef {
+  id: DrinkCategory;
+  label: string;
 }
