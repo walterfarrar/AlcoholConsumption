@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/state.ts","./src/types.ts","./src/components/bottle.tsx","./src/components/bottlepalette.tsx","./src/components/daycell.tsx","./src/components/shelf.tsx","./src/components/weekgrid.tsx","./src/components/weeklysummary.tsx","./src/data/drinks.ts"],"version":"5.9.3"}
