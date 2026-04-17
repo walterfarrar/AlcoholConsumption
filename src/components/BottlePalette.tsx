@@ -106,7 +106,9 @@ function PaletteBottle({ type }: { type: DrinkTypeId }) {
       className={`group flex shrink-0 flex-col items-center gap-0.5 rounded-md border border-transparent bg-white px-1.5 pb-1 pt-1.5 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-wood-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-wood-400 ${
         isDragging ? 'opacity-30' : ''
       }`}
-      style={{ touchAction: 'none', minWidth: 56 }}
+      // pan-x lets the browser scroll the palette horizontally on a horizontal
+      // swipe; vertical pan is left to dnd-kit's TouchSensor for the drag-up gesture.
+      style={{ touchAction: 'pan-x', minWidth: 56 }}
     >
       <Bottle type={type} size={52} interactive />
       <span className="text-[10px] font-medium leading-tight text-stone-700">
