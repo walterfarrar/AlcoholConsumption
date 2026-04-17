@@ -57,7 +57,7 @@ export default function App() {
             How much did you drink last week?
           </h1>
           <p className="mt-1 text-sm text-stone-600 sm:text-base">
-            Tap a category at the bottom to see drinks, then drag one up onto a day. Tap a bottle
+            Tap a category at the bottom to see drinks, then drag one up onto a day. Tap a drink
             on a shelf to remove it.
           </p>
         </header>

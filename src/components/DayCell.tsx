@@ -40,7 +40,7 @@ export function DayCell({ day, entries, onRemove }: Props) {
         {entries.length === 0 ? (
           <div className="flex h-full min-h-[96px] items-center justify-center px-3 py-2">
             <p className="text-center text-xs text-wood-500/70 sm:text-sm">
-              Drag a bottle up to {day.label}
+              Drag a drink up to {day.label}
             </p>
           </div>
         ) : (
