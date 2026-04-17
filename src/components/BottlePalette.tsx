@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { DrinkCategory, DrinkTypeId } from '../types';
 import { CATEGORIES, DRINKS, DRINKS_BY_CATEGORY } from '../data/drinks';
@@ -19,6 +19,7 @@ const CATEGORY_PREVIEW: Record<DrinkCategory, DrinkTypeId> = {
  */
 export function BottlePalette() {
   const [openCategory, setOpenCategory] = useState<DrinkCategory | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <div
@@ -30,7 +31,7 @@ export function BottlePalette() {
             grow/shrink (and the page doesn't jump) when categories open/close.
             The inner w-fit + mx-auto centers content when it fits and falls
             back to left-aligned when content overflows (so scroll still works). */}
-        <div className="palette-scroll overflow-x-auto pb-2">
+        <div ref={scrollRef} className="overflow-x-auto pb-1">
           <div className="mx-auto flex min-h-[84px] w-fit items-stretch gap-1.5 sm:gap-2">
           {CATEGORIES.map((cat) => {
             const open = openCategory === cat.id;
@@ -69,7 +70,79 @@ export function BottlePalette() {
           })}
           </div>
         </div>
+        <ScrollIndicator scrollRef={scrollRef} deps={[openCategory]} />
       </div>
+    </div>
+  );
+}
+
+/**
+ * A custom horizontal scroll indicator. Mobile browsers (especially iOS
+ * Safari) hide native scrollbars on touch-driven scroll containers, so we
+ * render our own thin track + thumb under the palette. The thumb width
+ * represents the visible fraction of the content; its left position tracks
+ * the current scroll offset. Hidden when the content fits.
+ */
+function ScrollIndicator({
+  scrollRef,
+  deps,
+}: {
+  scrollRef: React.RefObject<HTMLDivElement>;
+  deps: unknown[];
+}) {
+  const [metrics, setMetrics] = useState({ visible: false, thumbPct: 1, leftPct: 0 });
+
+  function recompute() {
+    const el = scrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    const overflow = scrollWidth - clientWidth;
+    if (overflow <= 1) {
+      setMetrics((m) => (m.visible ? { visible: false, thumbPct: 1, leftPct: 0 } : m));
+      return;
+    }
+    const thumbPct = clientWidth / scrollWidth;
+    const leftPct = (scrollLeft / scrollWidth);
+    setMetrics({ visible: true, thumbPct, leftPct });
+  }
+
+  useLayoutEffect(() => {
+    recompute();
+    // Recompute when the open category changes (re-layout) and on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => recompute();
+    const onResize = () => recompute();
+    el.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    // Some content (fonts, async layout) can shift sizes shortly after mount.
+    const ro = 'ResizeObserver' in window ? new ResizeObserver(() => recompute()) : null;
+    ro?.observe(el);
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      ro?.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div
+      className="mx-auto mb-1 mt-0.5 h-1 w-[min(92%,420px)] rounded-full bg-wood-200/80"
+      style={{ visibility: metrics.visible ? 'visible' : 'hidden' }}
+      aria-hidden="true"
+    >
+      <div
+        className="h-full rounded-full bg-wood-500"
+        style={{
+          width: `${Math.max(metrics.thumbPct * 100, 8)}%`,
+          marginLeft: `${metrics.leftPct * 100}%`,
+        }}
+      />
     </div>
   );
 }
