@@ -13,10 +13,14 @@ export default function App() {
   const [activeType, setActiveType] = useState<DrinkTypeId | null>(null);
 
   // Mouse: small distance prevents click-to-remove being interpreted as drag.
-  // Touch: short delay so vertical page scrolling still works on mobile.
+  // Touch: distance-based (no delay) so a vertical drag picks the bottle up
+  // immediately. We rely on `touchAction: 'pan-x'` on each draggable bottle so
+  // the browser handles horizontal swipes as palette scroll (and sends
+  // touchcancel to dnd-kit), while vertical movement falls through to the
+  // TouchSensor and activates the drag almost instantly.
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 5 } }),
   );
 
   function handleDragStart(e: DragStartEvent) {
