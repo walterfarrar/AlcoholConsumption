@@ -20,6 +20,30 @@ const CATEGORY_PREVIEW: Record<DrinkCategory, DrinkTypeId> = {
 export function BottlePalette() {
   const [openCategory, setOpenCategory] = useState<DrinkCategory | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  // One ref per category group (button + its drinks). Lets us measure the
+  // group's position relative to the scroll container so we can slide the
+  // selected category to the left edge after it opens.
+  const groupRefs = useRef<Partial<Record<DrinkCategory, HTMLDivElement | null>>>({});
+
+  // When a category opens, scroll horizontally so that category's button is
+  // at the left edge of the visible palette. Without this, opening the last
+  // category (e.g. Cocktails) hides its drinks off-screen to the right and
+  // forces the user to scroll. Runs in a layout effect so the new content
+  // width is already measured.
+  useLayoutEffect(() => {
+    if (!openCategory) return;
+    const container = scrollRef.current;
+    const group = groupRefs.current[openCategory];
+    if (!container || !group) return;
+    const containerRect = container.getBoundingClientRect();
+    const groupRect = group.getBoundingClientRect();
+    // Small left inset so the active category card isn't flush with the edge.
+    const inset = 8;
+    const targetLeft = container.scrollLeft + (groupRect.left - containerRect.left) - inset;
+    const maxLeft = container.scrollWidth - container.clientWidth;
+    const clamped = Math.max(0, Math.min(targetLeft, maxLeft));
+    container.scrollTo({ left: clamped, behavior: 'smooth' });
+  }, [openCategory]);
 
   return (
     <div
@@ -36,7 +60,13 @@ export function BottlePalette() {
           {CATEGORIES.map((cat) => {
             const open = openCategory === cat.id;
             return (
-              <div key={cat.id} className="flex shrink-0 items-stretch gap-1.5 sm:gap-2">
+              <div
+                key={cat.id}
+                ref={(el) => {
+                  groupRefs.current[cat.id] = el;
+                }}
+                className="flex shrink-0 items-stretch gap-1.5 sm:gap-2"
+              >
                 <button
                   type="button"
                   onClick={() => setOpenCategory(open ? null : cat.id)}
