@@ -67,7 +67,13 @@ export default function App() {
 
       <DragOverlay dropAnimation={null}>
         {activeType ? (
-          <div className="pointer-events-none">
+          // Lift the dragged bottle up and scale it slightly so the user's finger
+          // doesn't cover it on touch devices. transform-origin keeps the lift
+          // anchored to the bottom (near the finger) rather than the center.
+          <div
+            className="pointer-events-none"
+            style={{ transform: 'translateY(-72px) scale(1.15)', transformOrigin: 'bottom center' }}
+          >
             <Bottle type={activeType} size={72} />
           </div>
         ) : null}
