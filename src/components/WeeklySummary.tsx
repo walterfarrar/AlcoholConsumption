@@ -59,11 +59,6 @@ export function WeeklySummary({ week, dispatch }: Props) {
           ))}
         </div>
       )}
-
-      <p className="mt-3 text-xs text-stone-500">
-        Standard drinks calculated using NIAAA approximations. This tool is for visualizing
-        consumption only and is not medical advice.
-      </p>
     </div>
   );
 }
