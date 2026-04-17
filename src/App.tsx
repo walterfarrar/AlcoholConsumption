@@ -1,4 +1,5 @@
-import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, DragOverlay, MouseSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DirectionalTouchSensor } from './sensors/DirectionalTouchSensor';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useState } from 'react';
 import { BottlePalette } from './components/BottlePalette';
@@ -13,14 +14,14 @@ export default function App() {
   const [activeType, setActiveType] = useState<DrinkTypeId | null>(null);
 
   // Mouse: small distance prevents click-to-remove being interpreted as drag.
-  // Touch: distance-based (no delay) so a vertical drag picks the bottle up
-  // immediately. We rely on `touchAction: 'pan-x'` on each draggable bottle so
-  // the browser handles horizontal swipes as palette scroll (and sends
-  // touchcancel to dnd-kit), while vertical movement falls through to the
-  // TouchSensor and activates the drag almost instantly.
+  // Touch: angle-based activation. Once the finger has traveled `distance`
+  // pixels we look at the angle: vertical-dominant (top/bottom of an X around
+  // the touch point) starts the drag instantly; horizontal-dominant cancels
+  // and lets `touch-action: pan-x` on the bottle scroll the palette. This
+  // prevents accidental pickups when the user is scrolling the drink list.
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
-    useSensor(TouchSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(DirectionalTouchSensor, { activationConstraint: { distance: 8 } }),
   );
 
   function handleDragStart(e: DragStartEvent) {
