@@ -77,7 +77,7 @@ export default function App() {
           // anchored to the bottom (near the finger) rather than the center.
           <div
             className="pointer-events-none"
-            style={{ transform: 'translateY(-72px) scale(1.15)', transformOrigin: 'bottom center' }}
+            style={{ transform: 'translateY(-56px) scale(1.15)', transformOrigin: 'bottom center' }}
           >
             <Bottle type={activeType} size={72} />
           </div>
