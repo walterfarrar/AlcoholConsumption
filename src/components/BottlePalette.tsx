@@ -30,7 +30,7 @@ export function BottlePalette() {
             grow/shrink (and the page doesn't jump) when categories open/close.
             The inner w-fit + mx-auto centers content when it fits and falls
             back to left-aligned when content overflows (so scroll still works). */}
-        <div className="overflow-x-auto pb-2">
+        <div className="palette-scroll overflow-x-auto pb-2">
           <div className="mx-auto flex min-h-[84px] w-fit items-stretch gap-1.5 sm:gap-2">
           {CATEGORIES.map((cat) => {
             const open = openCategory === cat.id;
